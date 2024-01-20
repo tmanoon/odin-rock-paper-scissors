@@ -4,20 +4,42 @@ function getComputerChoice() {
     return choice
 }
 
-    var playerScore = 0
-    var computerScore = 0
-    var equality = false
+var playerScore = 0
+var computerScore = 0
+
+function score(computer, player, equality = false) {
+
+    var equal = equality
+    playerScore += player
+    computerScore += computer
+
+    var p = document.createElement('p')
+    var winnerDiv = document.querySelector('#winner')
+    if (equal) {
+        p.textContent = 'Nobody won this time.'
+    }
+    
+
+    p.textContent = `The player's score is: ${playerScore}, and the computer's score is: ${computerScore}`
+    if (playerScore === 5) {
+        p.textContent = 'The player is the winner!'
+    } else if (computerScore === 5) {
+        p.textContent = 'The computer is the winner!'
+    }
+    
+    winnerDiv.appendChild(p)
+}
 
 function playRound(playerSelection, computerSelection) {
 
     if (playerSelection === computerSelection) {
-        equality = true
+        score(0, 0, true)
         return `Both you and the computer selected ${computerSelection}. This round does not count, and another one is added for the competition.`
     } else if ((playerSelection === 'Rock' && computerSelection === 'Scissors') || (playerSelection === 'Paper' && computerSelection === 'Rock') || (playerSelection === 'Scissors' && computerSelection === 'Paper')) {
-        playerScore++
+        score(0, 1)
         return `Congratulations! You won! ${playerSelection} beats ${computerSelection} !`
     } else {
-        computerScore++
+        score(1, 0)
         return `The computer won! ${computerSelection} beats ${playerSelection} !`
     }
 }
@@ -45,18 +67,6 @@ scissorsButton.addEventListener('click', function () {
     handleButtonClick('scissors');
 });
 
-
-
-var p = document.createElement('p')
-p.textContent = `The player score now is ${playerScore}, and the computer score is ${computerScore}`
-if (playerScore === 5) {
-    p.textContent += `and the winner is the Player!`
-} else if (computerScore === 5) {
-    p.textContent += `and the winner is the computer!`
-}
-
-var bod = document.querySelector('#bod')
-bod.appendChild(p)
 
 
 
