@@ -1,0 +1,118 @@
+@font-face {
+    font-family: header-font;
+    src: url(fonts/Magnolia.ttf);
+}
+
+@font-face {
+    font-family: common-font;
+    src: url(fonts/Montserrat-Bold.ttf);
+}
+
+
+
+body {
+    text-align: center;
+    background-image: url('../icons/background.gif');
+}
+
+h1 {
+    font-family: header-font, tahoma;
+    font-size: 90px;
+    text-shadow: 3px 3px 20px #ff99cc,
+        -2px 1px 30px #ff99cc;
+    color: white;
+
+}
+
+.text-and-pics {
+    background-color: rgba(255, 255, 255, 0.311);
+    width: fit-content;
+    margin: 30px auto;
+    box-shadow: 0 30px 40px 40px rgba(0, 0, 0, .1);
+    padding: 10px;
+    border-radius: 20px;
+}
+
+td {
+    background-color: darkgray;
+    border: 3px ridge rgb(65, 65, 65);
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    outline: 'none'
+}
+
+table {
+    border: 3px darkgray;
+    margin: auto;
+}
+
+#img-button,
+.hintImg {
+    width: 37px;
+    height: 37px;
+    background-color: transparent;
+}
+
+#smiley {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+img {
+    cursor: pointer;
+}
+
+.hints span,
+.hints img {
+    display: inline-block;
+}
+
+.dark-mode {
+    background-color: rgb(42, 42, 42);
+    color: white;
+    border: 3px solid azure;
+}
+
+button {
+    border: none;
+    padding: 7px 20px;
+    border-radius: 20px;
+    font-family: common-font, tahoma;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+}
+
+#safe-click {
+    background-color: rgb(255, 111, 171);
+    color: white;
+    padding: 10px;
+    border-radius: 14px;
+    font-size: 18px;
+    margin-top: 15px;
+    text-shadow: 0 2px 1px #828282, -2px 3px 1px #8f8f8f, -2px 5px 1px #1212128c;
+
+}
+
+audio {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+footer {
+    font-family: common-font, tahoma;
+    font-size: 11px;
+    color: white;
+}
+
+.container {
+    font-family: common-font, tahoma;
+}
+
+#helpers {
+    text-shadow: -1px 1px 0 #41ba45,
+    1px 1px 0 #c63d2b,
+   1px -1px 0 #42afac,
+  -1px -1px 0 #c6c23f;
+}

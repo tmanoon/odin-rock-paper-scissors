@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock Paper Scissors</title>
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="css/style.css" />
 </head>
-<body id="bod">
-    <button id="rock">Rock</button>
-    <button id="paper">Paper</button>
-    <button id="scissors">Scissors</button>
-    <div class="results"></div>
-    <div id="winner"></div>
-    <script src="js/code.js"></script>
+
+<body onload="onInit()">
+    <h1>Minesweeper</h1>
+    <div class="container">
+        <!-- ADD TO BODY WHEN TOTALLY FINISHED!!!!!!!!!!! oncontextmenu="disableMenu(event)" -->
+
+        <button class="dark-mode btn" onclick="darkMode()">Dark Mode</button><button class="bright-mode btn"
+            onclick="brightMode()">Bright Mode</button>
+        <div class="text-and-pics">
+            <p id="helpers">Helpers</p>
+            <p class="lives">You have <span></span> lives left</p>
+            <!-- <p class="best-score">Your best score till now was <span class="score"></span> in <span class="seconds"></span> seconds.</p> -->
+            <p class="timer">How much time passed: <span>0</span> seconds</p>
+
+            <div class="hints">
+                <img onclick="turnOnHintMode(this)" class="hintImg" src="./icons/hint.png" /></span>
+                <img onclick="turnOnHintMode(this)" class="hintImg" src="./icons/hint.png" /></span>
+                <img onclick="turnOnHintMode(this)" class="hintImg" src="./icons/hint.png" /></span>
+            </div>
+            <div class="hints-buttons">
+                <button id="safe-click" onclick="useSafeClick()">Safe click</button>
+                <p>You have <span class="safe-click"></span> clicks to spend</p>
+            </div>
+        </div>
+        <div class="levels">
+            <button onclick="setLevelSize(4, 2)">Beginner</button>
+            <button onclick="setLevelSize(8, 14)">Medium</button>
+            <button onclick="setLevelSize(12, 32)">Expert</button>
+        </div>
+        <button id="smiley" onclick="onInit()"><img id="img-button" onmouseup="returnToRegularExpression(this)"
+                src="./icons/regular-randy.png" /></button>
+
+        <table>
+
+        </table>
+    </div>
+    <audio controls src="./audio/Kansas-CarryOnWaywardSon.mp3"></audio>
+    <footer>© Made with great love to coding by Tmanoon (Shoval) <br/>Background pic by Nelvix from Reddit</footer>
+    <script src="js/utils.js"></script>
+    <script src="js/game.js"></script>
+
 </body>
+
 </html>
