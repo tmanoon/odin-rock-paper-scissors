@@ -8,8 +8,6 @@
     src: url(fonts/Montserrat-Bold.ttf);
 }
 
-
-
 body {
     text-align: center;
     background-image: url('../icons/background.gif');
@@ -21,7 +19,23 @@ h1 {
     text-shadow: 3px 3px 20px #ff99cc,
         -2px 1px 30px #ff99cc;
     color: white;
+    margin-bottom: 30px;
 
+}
+
+.lives-num {
+    color: red;
+}
+
+.safe-click {
+    color: rgb(213, 0, 85);
+    background-color: rgba(255, 226, 6, 0.37);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.safe-clicks {
+    font-size: 12px;
 }
 
 .text-and-pics {
@@ -48,7 +62,8 @@ table {
 }
 
 #img-button,
-.hintImg {
+.hintImg,
+.mine-exterminator {
     width: 37px;
     height: 37px;
     background-color: transparent;
@@ -84,13 +99,15 @@ button {
     box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
 }
 
-#safe-click {
+#safe-click,
+.undo {
     background-color: rgb(255, 111, 171);
     color: white;
     padding: 10px;
     border-radius: 14px;
     font-size: 18px;
-    margin-top: 15px;
+    margin-top: 13px;
+    margin-bottom: 13px;
     text-shadow: 0 2px 1px #828282, -2px 3px 1px #8f8f8f, -2px 5px 1px #1212128c;
 
 }

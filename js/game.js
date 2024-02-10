@@ -18,11 +18,15 @@ const gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0
+    secsPassed: 0,
+    steps: []
 }
 
 function onInit() {
+    randomSong()
+    updateVariables()
     if (gSecondsInterval) clearInterval(gSecondsInterval)
+    timeCounter()
     updateSpanSafeClicks()
     showHints()
     updateLives(lives)
@@ -36,6 +40,7 @@ function createBoard() {
         for (let j = 0; j < gLevel.SIZE; j++) {
             const currCell = {
                 minesAroundCount: 0,
+                location: { i, j },
                 isShown: false,
                 isMine: false,
                 isMarked: false,
@@ -67,6 +72,7 @@ function renderBoard() {
 function onCellClicked(elCell, ev, i, j) {
     const click = ev.button
     gRandyBtn.src = './icons/anxious-randy.png'
+    gGame.isOn = true
 
     if (click === 0) {
         if (checkIfFirstClick()) {
@@ -78,10 +84,12 @@ function onCellClicked(elCell, ev, i, j) {
             onLeftClick(elCell, i, j)
             startCountingSeconds()
             if (gBoard[i][j].isHint) revealCellsAndNegs(i, j)
+            gGame.steps.push(gBoard[i][j])
             return
         }
         if (gBoard[i][j].isHint) revealCellsAndNegs(i, j)
         onLeftClick(elCell, i, j)
+        gGame.steps.push(gBoard[i][j])
     }
     if (click === 2) {
         onCellMarked(elCell)
@@ -97,6 +105,7 @@ function onLeftClick(elCell, i, j) {
     else {
         gBoard[i][j].isShown = true
         elCell.innerText = gBoard[i][j].minesAroundCount
+        if(gBoard[i][j].isHint) gBoard[i][j].isShown = false
     }
 }
 
@@ -136,20 +145,20 @@ function countMinesAroundCell(rowIdx, colIdx) {
 }
 
 function checkGameOver() {
-    const winningTotal = (gLevel.SIZE ** 2) - (gLevel.MINES)
+    const winningTotal = (gLevel.SIZE ** 2)
     const cellsClickedAndMarked = gGame.shownCount + gGame.markedCount
     if (gGame.secsPassed < 90 && cellsClickedAndMarked === winningTotal) {
-        console.log(`You did it! you won!`)
+        alert(`You did it! you won!`)
+        checkBestScore(gGame.secsPassed, cellsClickedAndMarked)
+        !gGame.isOn
         clearInterval(gSecondsInterval)
     }
     if (gGame.secsPassed >= 90 && cellsClickedAndMarked !== winningTotal) {
-        console.log(`Time has run out and you haven't found all the cells yet. You lost.`)
+        alert(`Time has run out and you haven't found all the cells yet. You lost.`)
         gRandyBtn.src = '../icons/sad-randy.png'
         clearInterval(gSecondsInterval)
+        !gGame.isOn
     }
-}
-
-function expandShown(board, elCell, i, j) { //try afterwards
 }
 
 function randomMines(numOfMines, i, j) {
@@ -169,14 +178,17 @@ function onCellMarked(elCell) {
 
     if (gBoard[iIdxOfCell][jIdxOfCell].isMarked === false) {
         elCell.innerText = FLAG
-        gGame.markedCount++
         gBoard[iIdxOfCell][jIdxOfCell].isMarked = true
+        gGame.markedCount++
+        gGame.steps.push(gBoard[iIdxOfCell][jIdxOfCell])
         return
     }
     if (gBoard[iIdxOfCell][jIdxOfCell].isMarked === true) {
         elCell.innerText = EMPTY
-        gGame.markedCount--
         gBoard[iIdxOfCell][jIdxOfCell].isMarked = false
+        gGame.markedCount--
+        const idxOfCell = gGame.steps.indexOf(gBoard[iIdxOfCell][jIdxOfCell])
+        gGame.steps.splice(idxOfCell, 1)
     }
 }
 
@@ -184,7 +196,8 @@ function checkIfFirstClick() {
     for (let i = 0; i < gBoard.length; i++) {
         for (let j = 0; j < gBoard[0].length; j++) {
             const currCell = gBoard[i][j]
-            if (currCell.wasHinted || currCell.isShown) return false
+            if (currCell.wasHinted) return false
+            else if (currCell.isShown) return false
         }
     }
     return true
@@ -209,7 +222,7 @@ function checkIfEnoughLives() {
     if (lives === 0 && !isHint) {
         clearInterval(gSecondsInterval)
         gRandyBtn.src = './icons/sad-randy.png'
-        console.log('No more lives. You Lost!')
+        alert('No more lives. You Lost! New game begins.') //changed to alert so the user can understand what happens, github does not recognize
         onInit()
     }
 }
@@ -227,6 +240,7 @@ function turnOnHintMode(img) {
     img.style.backgroundColor = 'beige'
     for (let i = 0; i < gBoard.length; i++) {
         for (let j = 0; j < gBoard[0].length; j++) {
+            if(gBoard[i][j].isShown) continue
             gBoard[i][j].isHint = true
         }
     }
@@ -239,6 +253,7 @@ function revealCellsAndNegs(rowIdx, colIdx) {
         if (i < 0 || i >= gBoard.length) continue
         for (let j = colIdx + 1; j >= colIdx - 1; j--) {
             if (j < 0 || j >= gBoard[0].length) continue
+            if (gBoard[i][j].isShown) continue
             const currElCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
             onLeftClick(currElCell, i, j)
         }
@@ -256,6 +271,7 @@ function unrevealCellAndNegs(rowIdx, colIdx, originalLives) {
         if (i < 0 || i >= gBoard.length) continue
         for (let j = colIdx + 1; j >= colIdx - 1; j--) {
             if (j < 0 || j >= gBoard[0].length) continue
+            if (!gBoard[i][j].isHint) continue
             const elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
             elCell.innerText = EMPTY
             lives = originalLives
@@ -289,12 +305,26 @@ function useSafeClick() {
     }
 }
 
-function handleChosenCell(i, j) {
-    markCell(i, j)
-    setTimeout(() => {
-        const elCell = document.querySelector(`.cell-${i}-${j}`)
-        elCell.style.boxShadow = 'none'
-    }, 1500)
-    safeClicks--
-    updateSpanSafeClicks()
+function mineExterminator() {
+    if (gLevel.SIZE === 4) return alert('The mine exterminator can be used only in Medium or Expert mode.')
+    else if (checkIfFirstClick()) return alert('You have not started to play, so no mines are set for me to delete.')
+
+    const mines = []
+    findMines(mines)
+    for (let e = 0; e < 3; e++) {
+        const idxOfMine = getRandomIntInclusive(0, mines.length - 1)
+        const selectedCell = gBoard[mines[idxOfMine].i][mines[idxOfMine].j]
+        selectedCell.isMine = false
+        mines.splice(idxOfMine, 1)
+    }
+    setMinesNegsCount(gBoard)
+}
+
+function findMines(mines) {
+    for (let i = 0; i < gLevel.SIZE; i++) {
+        for (let j = 0; j < gLevel.SIZE; j++) {
+            const currCell = gBoard[i][j]
+            if (currCell.isMine) mines.push(currCell.location)
+        }
+    }
 }

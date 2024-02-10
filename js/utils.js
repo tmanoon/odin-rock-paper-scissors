@@ -1,6 +1,7 @@
 const gRandyBtn = document.querySelector('#img-button')
 const gElTimerSpan = document.querySelector('.timer span')
 const elSpanSafeClick = document.querySelector('.safe-click')
+const possSongs = ['./audio/stan.mp3', './audio/monicas.mp3', './audio/nitzozot.mp3', './audio/kansas.mp3']
 
 function getRandomIntInclusive(min = 0, max = gBoard.length - 1) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -21,7 +22,7 @@ function returnToRegularExpression() {
 }
 
 function timeCounter() {
- 
+
     gElTimerSpan.innerText = gGame.secsPassed
 }
 
@@ -33,42 +34,42 @@ function showHints() {
 }
 
 function turnOffAndRemoveHint() {
-        const hintsImages = document.querySelectorAll('.hintImg')
-        for (let i = 0; i < hintsImages.length; i++) {
-            const currImage = hintsImages[i]
-            if (currImage.style.backgroundColor === 'beige') {
-                currImage.style.backgroundColor = 'transparent'
-                currImage.style.display = 'none'
-            }
+    const hintsImages = document.querySelectorAll('.hintImg')
+    for (let i = 0; i < hintsImages.length; i++) {
+        const currImage = hintsImages[i]
+        if (currImage.style.backgroundColor === 'beige') {
+            currImage.style.backgroundColor = 'transparent'
+            currImage.style.display = 'none'
         }
+    }
 }
 
 function darkMode() {
     const elTds = document.querySelectorAll('td')
     const elBtns = document.querySelectorAll('button')
-    for(let i = 0; i < elTds.length; i++) {
-        if(elTds[i].classList.contains('bright-mode')) elTds[i].classList.remove('bright-mode')
+    for (let i = 0; i < elTds.length; i++) {
+        if (elTds[i].classList.contains('bright-mode')) elTds[i].classList.remove('bright-mode')
         elTds[i].classList.add('dark-mode')
-       
+
     }
-    
-    for(let i = 0; i < elBtns.length; i++) {
-        if(elBtns[i].classList.contains('btn')) continue
-         elBtns[i].classList.add('dark-mode')
+
+    for (let i = 0; i < elBtns.length; i++) {
+        if (elBtns[i].classList.contains('btn')) continue
+        elBtns[i].classList.add('dark-mode')
     }
 }
 
 function brightMode() {
     const elTds = document.querySelectorAll('td')
     const elBtns = document.querySelectorAll('button')
-    for(let i = 0; i < elTds.length; i++) {
-        if(elTds[i].classList.contains('dark-mode')) elTds[i].classList.remove('dark-mode')
-       
+    for (let i = 0; i < elTds.length; i++) {
+        if (elTds[i].classList.contains('dark-mode')) elTds[i].classList.remove('dark-mode')
+
     }
 
-    for(let i = 0; i < elBtns.length; i++) {
-        if(elBtns[i].classList.contains('btn')) continue
-        else if(elBtns[i].classList.contains('dark-mode')) elBtns[i].classList.remove('dark-mode')
+    for (let i = 0; i < elBtns.length; i++) {
+        if (elBtns[i].classList.contains('btn')) continue
+        else if (elBtns[i].classList.contains('dark-mode')) elBtns[i].classList.remove('dark-mode')
         elBtns[i].classList.add('bright-mode')
     }
 }
@@ -88,4 +89,63 @@ function startCountingSeconds() {
         gGame.secsPassed++
         checkGameOver()
     }, 1000)
+}
+
+function updateVariables() {
+    lives = 3
+    gGame.secsPassed = 0
+    safeClicks = 3
+    gGame.markedCount = 0
+    gGame.shownCount = 0
+    steps = []
+
+}
+
+function handleChosenCell(i, j) {
+    markCell(i, j)
+    setTimeout(() => {
+        const elCell = document.querySelector(`.cell-${i}-${j}`)
+        elCell.style.boxShadow = 'none'
+    }, 1500)
+    safeClicks--
+    updateSpanSafeClicks()
+}
+
+function randomSong() {
+    const elAudio = document.querySelector('audio')
+    const chosenSongIdx = getRandomIntInclusive(0, possSongs.length - 1)
+    elAudio.src = possSongs[chosenSongIdx]
+}
+
+function checkBestScore(seconds, score) {
+    const elSpanScore = document.querySelector('.best-score .score')
+    const elSpanSeconds = document.querySelector('.best-score .seconds')
+
+    if (typeof (Storage) !== undefined) {
+        if (!localStorage.getItem('score') && !localStorage.getItem('seconds')) {
+            localStorage.setItem('score', JSON.stringify(score))
+            localStorage.setItem('seconds', JSON.stringify(seconds))
+        } else {
+            const secsToCompare = localStorage.getItem('seconds')
+            const scoreToCompare = localStorage.getItem('score')
+            if (secsToCompare > seconds && scoreToCompare < score) {
+                localStorage.removeItem('score')
+                localStorage.removeItem('seconds')
+                localStorage.setItem('score', JSON.stringify(score))
+                localStorage.setItem('seconds', JSON.stringify(seconds))
+            }
+        }
+    } else console.log('No local storage to show the best score.')
+
+    elSpanScore.innerText = localStorage.getItem('score')
+    elSpanSeconds.innerText = localStorage.getItem('seconds')
+}
+
+function undoStep() {
+    const stepToRemove = gGame.steps[(gGame.steps).length - 1]
+    if (stepToRemove.isShown) stepToRemove.isShown = false
+    else if (stepToRemove.isMarked) stepToRemove.isMarked = false
+    else if (stepToRemove.isMine) lives++
+    const cellOfStep = document.querySelector(`.cell-${stepToRemove.location.i}-${stepToRemove.location.j}`)
+    cellOfStep.innerText = EMPTY
 }
